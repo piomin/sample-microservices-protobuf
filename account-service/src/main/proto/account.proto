@@ -1,0 +1,8 @@
+package pl.piomin.services.protobuf.account.model;
+
+message Account {
+
+	required int32 id = 1;
+	required string number = 2;
+	required int32 customer_id = 3;
+}
