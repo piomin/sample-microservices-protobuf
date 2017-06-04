@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package model;
+
+option java_package = "pl.piomin.services.protobuf.customer.model";
+option java_outer_classname = "CustomerProto";
+
+message Accounts {
+	repeated Account account = 1;
+}
+
+message Account {
+
+	int32 id = 1;
+	string number = 2;
+	int32 customer_id = 3;
+	
+}
+
+message Customers {
+	repeated Customer customers = 1;
+}
+
+message Customer {
+
+	int32 id = 1;
+	string pesel = 2;
+	string name = 3;
+	CustomerType type = 4;
+	repeated Account accounts = 5;
+	
+	enum CustomerType {
+		INDIVIDUAL = 0;
+		COMPANY = 1;
+	}
+	
+}

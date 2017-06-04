@@ -1,8 +1,18 @@
-package pl.piomin.services.protobuf.account.model;
+syntax = "proto3";
+
+package model;
+
+option java_package = "pl.piomin.services.protobuf.account.model";
+option java_outer_classname = "AccountProto";
+
+message Accounts {
+	repeated Account account = 1;
+}
 
 message Account {
 
-	required int32 id = 1;
-	required string number = 2;
-	required int32 customer_id = 3;
+	int32 id = 1;
+	string number = 2;
+	int32 customer_id = 3;
+	
 }
