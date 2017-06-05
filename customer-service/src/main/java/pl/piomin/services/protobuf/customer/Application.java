@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import pl.piomin.services.protobuf.customer.model.CustomerProto.Customer;
 import pl.piomin.services.protobuf.customer.model.CustomerProto.Customer.CustomerType;
 
 @SpringBootApplication
+@EnableFeignClients
 public class Application {
 
 	public static void main(String[] args) {

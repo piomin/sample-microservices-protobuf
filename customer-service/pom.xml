@@ -55,7 +55,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>src/main/generated</outputDirectory>
-							<protocExecutable>C:\Users\Piotr\Protobuf\bin\protoc.exe</protocExecutable>
+							<protocExecutable>${proto.executable}</protocExecutable>
 						</configuration>
 					</execution>
 				</executions>
