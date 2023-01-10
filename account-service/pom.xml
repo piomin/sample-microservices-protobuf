@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.3.1</version>
+			<version>3.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.protobuf-java-format</groupId>
@@ -39,23 +39,47 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.xolstice.maven.plugins</groupId>
-				<artifactId>protobuf-maven-plugin</artifactId>
-				<version>0.5.0</version>
+				<groupId>com.github.os72</groupId>
+				<artifactId>protoc-jar-maven-plugin</artifactId>
+				<version>3.11.4</version>
 				<executions>
 					<execution>
-						<id>protobuf-compile</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>compile</goal>
+							<goal>run</goal>
 						</goals>
 						<configuration>
+							<addProtoSources>all</addProtoSources>
+							<includeMavenTypes>direct</includeMavenTypes>
 							<outputDirectory>src/main/generated</outputDirectory>
-							<protocExecutable>${proto.executable}</protocExecutable>
+<!--							<includeDirectories>-->
+<!--								<include>src/main/more_proto_imports</include>-->
+<!--							</includeDirectories>-->
+							<inputDirectories>
+								<include>src/main/proto</include>
+							</inputDirectories>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.xolstice.maven.plugins</groupId>-->
+<!--				<artifactId>protobuf-maven-plugin</artifactId>-->
+<!--				<version>0.5.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>protobuf-compile</id>-->
+<!--						<phase>generate-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>compile</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>src/main/generated</outputDirectory>-->
+<!--							<protocExecutable>${proto.executable}</protocExecutable>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
