@@ -22,6 +22,6 @@ workflows:
   maven_test:
     jobs:
       - maven/test:
-          executor: j8
+          executor: jdk
 #      - build:
 #          context: SonarCloud
