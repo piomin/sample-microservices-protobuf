@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: 'cimg/openjdk:8.0'
+      - image: 'cimg/openjdk:17.0'
     steps:
       - checkout
       - run:
@@ -11,9 +11,9 @@ jobs:
           command: mvn verify sonar:sonar
 
 executors:
-  j8:
+  jdk:
     docker:
-      - image: 'cimg/openjdk:8.0'
+      - image: 'cimg/openjdk:17.0'
 
 orbs:
   maven: circleci/maven@1.4.1
