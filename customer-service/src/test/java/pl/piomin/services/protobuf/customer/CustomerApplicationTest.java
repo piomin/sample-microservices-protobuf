@@ -2,8 +2,7 @@ package pl.piomin.services.protobuf.customer;
 
 import java.util.logging.Logger;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -12,13 +11,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import pl.piomin.services.protobuf.customer.model.CustomerProto.Customer;
 import pl.piomin.services.protobuf.customer.model.CustomerProto.Customers;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@RunWith(SpringRunner.class)
 public class CustomerApplicationTest {
 
 	protected Logger logger = Logger.getLogger(CustomerApplicationTest.class.getName());
