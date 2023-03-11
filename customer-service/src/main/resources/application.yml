@@ -4,6 +4,13 @@ server:
 spring:  
   application:
     name: customer-service
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+      instances:
+        - name: account-service
+          servers: localhost:2222
 
 #eureka:  
 #  client:

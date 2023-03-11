@@ -22,7 +22,10 @@ public class AccountRepository {
 	}
 	
 	public Account findByNumber(String number) {
-		return accounts.stream().filter(it -> it.getNumber().equals(number)).findFirst().get();
+		return accounts.stream()
+				.filter(it -> it.getNumber().equals(number))
+				.findFirst()
+				.orElseThrow();
 	}
 
 }
