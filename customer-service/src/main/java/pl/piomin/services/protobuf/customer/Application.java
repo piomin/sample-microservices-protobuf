@@ -18,32 +18,32 @@ import java.util.List;
 @EnableFeignClients
 public class Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Bean
-	ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
-	}
+    @Bean
+    ProtobufHttpMessageConverter protobufHttpMessageConverter() {
+        return new ProtobufHttpMessageConverter();
+    }
 
-	@Bean
-	RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
-	}
+    @Bean
+    RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
+        return new RestTemplate(Arrays.asList(hmc));
+    }
 
-	@Bean
-	CustomerRepository repository() {
-		List<Customer> customers = new ArrayList<>();
-		customers.add(Customer.newBuilder().setId(1).setPesel("12345").setName("Adam Kowalski")
-				.setType(CustomerType.INDIVIDUAL).build());
-		customers.add(Customer.newBuilder().setId(2).setPesel("12346").setName("Anna Malinowska")
-				.setType(CustomerType.INDIVIDUAL).build());
-		customers.add(Customer.newBuilder().setId(3).setPesel("12347").setName("Paweł Michalski")
-				.setType(CustomerType.INDIVIDUAL).build());
-		customers.add(Customer.newBuilder().setId(4).setPesel("12348").setName("Karolina Lewandowska")
-				.setType(CustomerType.INDIVIDUAL).build());
-		return new CustomerRepository(customers);
-	}
+    @Bean
+    CustomerRepository repository() {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(Customer.newBuilder().setId(1).setPesel("12345").setName("Adam Kowalski")
+                .setType(CustomerType.INDIVIDUAL).build());
+        customers.add(Customer.newBuilder().setId(2).setPesel("12346").setName("Anna Malinowska")
+                .setType(CustomerType.INDIVIDUAL).build());
+        customers.add(Customer.newBuilder().setId(3).setPesel("12347").setName("Paweł Michalski")
+                .setType(CustomerType.INDIVIDUAL).build());
+        customers.add(Customer.newBuilder().setId(4).setPesel("12348").setName("Karolina Lewandowska")
+                .setType(CustomerType.INDIVIDUAL).build());
+        return new CustomerRepository(customers);
+    }
 
 }

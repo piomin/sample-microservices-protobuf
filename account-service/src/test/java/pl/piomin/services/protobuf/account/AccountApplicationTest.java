@@ -18,38 +18,38 @@ import pl.piomin.services.protobuf.account.model.AccountProto.Accounts;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AccountApplicationTest {
 
-	protected Logger logger = Logger.getLogger(AccountApplicationTest.class.getName());
-	
-	@Autowired
-	TestRestTemplate template;
-	
-	@Test
-	public void testFindByNumber() {
-		Account a = this.template.getForObject("/accounts/{id}", Account.class, "111111");
-		logger.info("Account[\n" + a + "]");
-	}
-	
-	@Test
-	public void testFindByCustomer() {
-		Accounts a = this.template.getForObject("/accounts/customer/{customer}", Accounts.class, "2");
-		logger.info("Accounts[\n" + a + "]");
-	}
-	
-	@Test
-	public void testFindAll() {
-		Accounts a = this.template.getForObject("/accounts", Accounts.class);
-		logger.info("Accounts[\n" + a + "]");
-	}
-	
+    protected Logger logger = Logger.getLogger(AccountApplicationTest.class.getName());
 
-	@TestConfiguration
-	static class Config {
+    @Autowired
+    TestRestTemplate template;
 
-		@Bean
-		public RestTemplateBuilder restTemplateBuilder() {
-			return new RestTemplateBuilder().additionalMessageConverters(new ProtobufHttpMessageConverter());
-		}
+    @Test
+    public void testFindByNumber() {
+        Account a = this.template.getForObject("/accounts/{id}", Account.class, "111111");
+        logger.info("Account[\n" + a + "]");
+    }
 
-	}
-	
+    @Test
+    public void testFindByCustomer() {
+        Accounts a = this.template.getForObject("/accounts/customer/{customer}", Accounts.class, "2");
+        logger.info("Accounts[\n" + a + "]");
+    }
+
+    @Test
+    public void testFindAll() {
+        Accounts a = this.template.getForObject("/accounts", Accounts.class);
+        logger.info("Accounts[\n" + a + "]");
+    }
+
+
+    @TestConfiguration
+    static class Config {
+
+        @Bean
+        public RestTemplateBuilder restTemplateBuilder() {
+            return new RestTemplateBuilder().additionalMessageConverters(new ProtobufHttpMessageConverter());
+        }
+
+    }
+
 }
