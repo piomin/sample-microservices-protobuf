@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package model;
+
+option java_package = "pl.piomin.services.grpc.account.model";
+option java_outer_classname = "AccountProto";
+
+service AccountsService {
+	rpc FindByNumber(FindByNumberRequest) returns (Account) {
+
+	}
+}
+
+message Accounts {
+	repeated Account account = 1;
+}
+
+message Account {
+
+	int32 id = 1;
+	string number = 2;
+	int32 customer_id = 3;
+	
+}
+
+message FindByNumberRequest {
+	string number = 1;
+}

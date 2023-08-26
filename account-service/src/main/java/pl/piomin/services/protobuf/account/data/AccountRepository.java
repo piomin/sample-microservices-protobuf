@@ -1,7 +1,6 @@
 package pl.piomin.services.protobuf.account.data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import pl.piomin.services.protobuf.account.model.AccountProto.Account;
 
