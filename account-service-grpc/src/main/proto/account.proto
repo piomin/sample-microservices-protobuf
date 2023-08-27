@@ -9,6 +9,18 @@ service AccountsService {
 	rpc FindByNumber(FindByNumberRequest) returns (Account) {
 
 	}
+
+	rpc FindByCustomer(FindByCustomerRequest) returns (Accounts) {
+
+	}
+
+	rpc FindAll(FindAllRequest) returns (Accounts) {
+
+	}
+
+	rpc AddAccount(Account) returns (Account) {
+
+	}
 }
 
 message Accounts {
@@ -25,4 +37,12 @@ message Account {
 
 message FindByNumberRequest {
 	string number = 1;
+}
+
+message FindByCustomerRequest {
+	int32 customer_id = 1;
+}
+
+message FindAllRequest {
+
 }
