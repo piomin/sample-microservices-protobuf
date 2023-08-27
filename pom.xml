@@ -34,6 +34,7 @@
         <module>account-service</module>
         <module>customer-service</module>
         <module>account-service-grpc</module>
+        <module>customer-service-grpc</module>
     </modules>
 
 </project>
