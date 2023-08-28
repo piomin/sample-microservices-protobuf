@@ -2,6 +2,7 @@ package pl.piomin.services.grpc.customer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import pl.piomin.services.grpc.customer.model.CustomerProto;
 import pl.piomin.services.grpc.customer.repository.CustomerRepository;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class CustomerApplication {
 
     public static void main(String[] args) {

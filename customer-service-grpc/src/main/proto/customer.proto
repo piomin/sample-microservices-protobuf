@@ -5,14 +5,21 @@ package model;
 option java_package = "pl.piomin.services.grpc.customer.model";
 option java_outer_classname = "CustomerProto";
 
-import "empty.proto";
-import "wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 service CustomersService {
   rpc FindByPesel(google.protobuf.StringValue) returns (Customer) {}
   rpc FindById(google.protobuf.Int32Value) returns (Customer) {}
   rpc FindAll(google.protobuf.Empty) returns (Customers) {}
   rpc AddCustomer(Customer) returns (Customer) {}
+}
+
+service AccountsService {
+  rpc FindByNumber(google.protobuf.StringValue) returns (Account) {}
+  rpc FindByCustomer(google.protobuf.Int32Value) returns (Accounts) {}
+  rpc FindAll(google.protobuf.Empty) returns (Accounts) {}
+  rpc AddAccount(Account) returns (Account) {}
 }
 
 message Accounts {

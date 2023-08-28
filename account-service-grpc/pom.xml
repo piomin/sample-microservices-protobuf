@@ -6,6 +6,7 @@
 
     <properties>
         <java.version>20</java.version>
+        <spring-cloud.version>2021.0.8</spring-cloud.version>
     </properties>
 
     <parent>
@@ -15,7 +16,9 @@
         <relativePath />
     </parent>
 
+    <groupId>pl.piomin</groupId>
     <artifactId>account-service-grpc</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -30,6 +33,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
@@ -50,6 +57,18 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -65,13 +84,11 @@
                         <configuration>
                             <addProtoSources>all</addProtoSources>
                             <includeMavenTypes>direct</includeMavenTypes>
+                            <includeStdTypes>true</includeStdTypes>
                             <outputDirectory>src/main/generated</outputDirectory>
                             <inputDirectories>
                                 <include>src/main/proto</include>
                             </inputDirectories>
-                            <includeDirectories>
-                                <include>src/main/proto-imports</include>
-                            </includeDirectories>
                             <includeImports>true</includeImports>
                             <outputTargets>
                                 <outputTarget>
