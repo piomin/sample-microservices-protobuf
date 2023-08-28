@@ -18,14 +18,15 @@ public class CustomersService extends CustomersServiceGrpc.CustomersServiceImplB
 
     @Autowired
     CustomerRepository repository;
-//    @Autowired
-//    AccountClient accountClient;
+    @Autowired
+    AccountClient accountClient;
 
     @Override
     public void findById(Int32Value request, StreamObserver<CustomerProto.Customer> responseObserver) {
         CustomerProto.Customer c = repository.findById(request.getValue());
-//        CustomerProto.Accounts a = accountClient.getAccountsByCustomerId(c.getId());
-//        c.getAccountsList().addAll(a.getAccountList());
+        CustomerProto.Accounts a = accountClient.getAccountsByCustomerId(c.getId());
+        List<CustomerProto.Account> l = a.getAccountList();
+        c = CustomerProto.Customer.newBuilder(c).addAllAccounts(l).build();
         responseObserver.onNext(c);
         responseObserver.onCompleted();
     }
