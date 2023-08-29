@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package model;
+
+option java_package = "pl.piomin.services.grpc.account.model";
+option java_outer_classname = "AccountProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service AccountsService {
+  rpc FindByNumber(google.protobuf.StringValue) returns (Account) {}
+  rpc FindByCustomer(google.protobuf.Int32Value) returns (Accounts) {}
+  rpc FindAll(google.protobuf.Empty) returns (Accounts) {}
+  rpc AddAccount(Account) returns (Account) {}
+}
+
+message Accounts {
+  repeated Account account = 1;
+}
+
+message Account {
+  int32 id = 1;
+  string number = 2;
+  int32 customer_id = 3;
+}

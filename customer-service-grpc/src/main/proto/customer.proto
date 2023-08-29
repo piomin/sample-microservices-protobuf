@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package model;
+
+option java_package = "pl.piomin.services.grpc.customer.model";
+option java_outer_classname = "CustomerProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service CustomersService {
+  rpc FindByPesel(google.protobuf.StringValue) returns (Customer) {}
+  rpc FindById(google.protobuf.Int32Value) returns (Customer) {}
+  rpc FindAll(google.protobuf.Empty) returns (Customers) {}
+  rpc AddCustomer(Customer) returns (Customer) {}
+}
+
+service AccountsService {
+  rpc FindByNumber(google.protobuf.StringValue) returns (Account) {}
+  rpc FindByCustomer(google.protobuf.Int32Value) returns (Accounts) {}
+  rpc FindAll(google.protobuf.Empty) returns (Accounts) {}
+  rpc AddAccount(Account) returns (Account) {}
+}
+
+message Accounts {
+  repeated Account account = 1;
+}
+
+message Account {
+  int32 id = 1;
+  string number = 2;
+  int32 customer_id = 3;
+}
+
+message Customer {
+  int32 id = 1;
+  string pesel = 2;
+  string name = 3;
+  CustomerType type = 4;
+  repeated Account accounts = 5;
+  enum CustomerType {
+    INDIVIDUAL = 0;
+    COMPANY = 1;
+  }
+}
+
+message Customers {
+  repeated Customer customers = 1;
+}
