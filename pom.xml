@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>20</java.version>
+        <java.version>21</java.version>
         <sonar.projectKey>piomin_sample-microservices-protobuf</sonar.projectKey>
         <sonar.organization>piomin</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
