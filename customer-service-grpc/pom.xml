@@ -5,7 +5,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <java.version>20</java.version>
         <spring-cloud.version>2021.0.9</spring-cloud.version>
     </properties>
 
