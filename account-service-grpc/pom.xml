@@ -4,26 +4,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <spring-cloud.version>2021.0.9</spring-cloud.version>
-    </properties>
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
-        <relativePath />
+        <groupId>pl.piomin</groupId>
+        <artifactId>sample-microservices-protobuf</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>pl.piomin</groupId>
     <artifactId>account-service-grpc</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
+
+    <properties>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
-            <version>2.15.0.RELEASE</version>
+            <version>${grpc-springboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,9 +36,14 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-testing</artifactId>
-            <version>1.58.0</version>
+            <version>${grpc.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -51,22 +54,10 @@
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-client-spring-boot-starter</artifactId>
-            <version>2.15.0.RELEASE</version>
+            <version>${grpc-springboot.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
@@ -96,7 +87,7 @@
                                 </outputTarget>
                                 <outputTarget>
                                     <type>grpc-java</type>
-                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.57.2</pluginArtifact>
+                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.61.1</pluginArtifact>
                                     <outputDirectory>src/main/generated</outputDirectory>
                                 </outputTarget>
                             </outputTargets>
