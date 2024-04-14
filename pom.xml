@@ -12,7 +12,7 @@
         <sonar.organization>piomin</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <grpc.version>1.62.2</grpc.version>
-        <grpc-springboot.version>3.0.0.RELEASE</grpc-springboot.version>
+        <grpc-springboot.version>3.1.0.RELEASE</grpc-springboot.version>
     </properties>
 
     <parent>
