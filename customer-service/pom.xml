@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.25.3</version>
+            <version>4.26.1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.protobuf-java-format</groupId>
@@ -62,6 +62,8 @@
                         </goals>
                         <configuration>
                             <addProtoSources>all</addProtoSources>
+                            <optimizeCodegen>true</optimizeCodegen>
+                            <protocVersion>4.26.1</protocVersion>
                             <includeMavenTypes>direct</includeMavenTypes>
                             <outputDirectory>src/main/generated</outputDirectory>
                             <inputDirectories>
