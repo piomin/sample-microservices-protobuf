@@ -62,6 +62,8 @@
                         </goals>
                         <configuration>
                             <addProtoSources>all</addProtoSources>
+                            <optimizeCodegen>true</optimizeCodegen>
+                            <protocVersion>4.26.1</protocVersion>
                             <includeMavenTypes>direct</includeMavenTypes>
                             <outputDirectory>src/main/generated</outputDirectory>
                             <inputDirectories>
