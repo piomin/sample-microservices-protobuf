@@ -1,0 +1,562 @@
+From bd653fbc438d4bc55b8dc75f17d5ebfbae9623b3 Mon Sep 17 00:00:00 2001
+From: "devin-ai-integration[bot]"
+ <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+Date: Sun, 9 Feb 2025 08:40:41 +0000
+Subject: [PATCH] feat: add AccountsService gateway and actions
+
+- Add gateway implementation for AccountsService
+- Add actions for FindByNumber, FindByCustomer, FindAll, AddAccount
+- Add modifiers and assertions for each action
+- Follow ctf library patterns and best practices
+
+Co-Authored-By: Bryce Hunt <bryce@cognition.ai>
+---
+ .../accountsservice/addaccount/action.go      | 55 ++++++++++++++++++
+ .../accountsservice/addaccount/assertion.go   | 36 ++++++++++++
+ .../accountsservice/addaccount/modifier.go    | 20 +++++++
+ .../actions/accountsservice/findall/action.go | 45 +++++++++++++++
+ .../accountsservice/findall/assertion.go      | 36 ++++++++++++
+ .../accountsservice/findbycustomer/action.go  | 56 +++++++++++++++++++
+ .../findbycustomer/assertion.go               | 36 ++++++++++++
+ .../findbycustomer/modifier.go                | 13 +++++
+ .../accountsservice/findbynumber/action.go    | 53 ++++++++++++++++++
+ .../accountsservice/findbynumber/assertion.go | 36 ++++++++++++
+ .../accountsservice/findbynumber/modifier.go  | 13 +++++
+ .../main/actions/accountsservice/gateway.go   | 49 ++++++++++++++++
+ 12 files changed, 448 insertions(+)
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/addaccount/action.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/addaccount/assertion.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/addaccount/modifier.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findall/action.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findall/assertion.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbycustomer/action.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbycustomer/assertion.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbycustomer/modifier.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbynumber/action.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbynumber/assertion.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/findbynumber/modifier.go
+ create mode 100644 customer-service-grpc/src/main/actions/accountsservice/gateway.go
+
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/addaccount/action.go b/customer-service-grpc/src/main/actions/accountsservice/addaccount/action.go
+new file mode 100644
+index 0000000..d557fd8
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/addaccount/action.go
+@@ -0,0 +1,55 @@
++package addaccount
++
++import (
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	accountsservice "../"
++	"github.com/uber/ctf"
++)
++
++// actionName for this action
++const (
++	actionName = "test://accountsservice/actions/addaccount"
++)
++
++// RequestModifier is a modifier function which adds to the request before calling the action
++type RequestModifier func(*ctf.T, Entities, *model.Account)
++
++// ResponseAssertion is an assertion function to assert response
++type ResponseAssertion func(*ctf.T, Entities, *model.Account, error)
++
++// Entities are the entity inputs to the action
++type Entities struct {
++	AccountsService accountsservice.Interface
++	Customer       interface {
++		ID() int32
++	}
++}
++
++// Params is input required to make calls to accounts-service::AddAccount
++type Params struct {
++	Entities         Entities
++	RequestModifiers []RequestModifier
++	Assertions      struct {
++		Response []ResponseAssertion
++	}
++}
++
++// New triggers an action to call accounts-service::AddAccount
++func New(p *Params) *ctf.Action {
++	return ctf.NewActionV2(actionName,
++		func(t *ctf.T) {
++			request := &model.Account{}
++
++			for _, modifier := range p.RequestModifiers {
++				modifier(t, p.Entities, request)
++			}
++
++			res, err := p.Entities.AccountsService.AddAccount(t.Context(), request)
++			
++			for _, assertion := range p.Assertions.Response {
++				assertion(t, p.Entities, res, err)
++			}
++		},
++	)
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/addaccount/assertion.go b/customer-service-grpc/src/main/actions/accountsservice/addaccount/assertion.go
+new file mode 100644
+index 0000000..f7146e2
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/addaccount/assertion.go
+@@ -0,0 +1,36 @@
++package addaccount
++
++import (
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	"github.com/uber/ctf"
++)
++
++// AssertSuccessfulResponse asserts the response is not nil and no error occurred
++func AssertSuccessfulResponse() ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.NoError(t, err, "there should be no error while adding account")
++		require.NotNil(t, response, "response should not be nil while adding account")
++	}
++}
++
++// AssertAccountNumber asserts the account number matches expected value
++func AssertAccountNumber(expected string) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.Number, "account number should match expected value")
++	}
++}
++
++// AssertCustomerID asserts the customer ID matches expected value
++func AssertCustomerID(expected int32) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.CustomerId, "customer ID should match expected value")
++	}
++}
++
++// AssertAccountID asserts the account ID matches expected value
++func AssertAccountID(expected int32) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.Id, "account ID should match expected value")
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/addaccount/modifier.go b/customer-service-grpc/src/main/actions/accountsservice/addaccount/modifier.go
+new file mode 100644
+index 0000000..0c8b466
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/addaccount/modifier.go
+@@ -0,0 +1,20 @@
++package addaccount
++
++import (
++	"pl.piomin.services.grpc.customer.model"
++	"github.com/uber/ctf"
++)
++
++// WithAccountNumber sets the account number in the request
++func WithAccountNumber(number string) RequestModifier {
++	return func(t *ctf.T, entities Entities, request *model.Account) {
++		request.Number = number
++	}
++}
++
++// CustomerIDRequestModifier sets the customer ID from entities in the request
++func CustomerIDRequestModifier() RequestModifier {
++	return func(t *ctf.T, entities Entities, request *model.Account) {
++		request.CustomerId = entities.Customer.ID()
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findall/action.go b/customer-service-grpc/src/main/actions/accountsservice/findall/action.go
+new file mode 100644
+index 0000000..2da3129
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findall/action.go
+@@ -0,0 +1,45 @@
++package findall
++
++import (
++	"github.com/golang/protobuf/ptypes/empty"
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	accountsservice "../"
++	"github.com/uber/ctf"
++)
++
++// actionName for this action
++const (
++	actionName = "test://accountsservice/actions/findall"
++)
++
++// ResponseAssertion is an assertion function to assert response
++type ResponseAssertion func(*ctf.T, Entities, *model.Accounts, error)
++
++// Entities are the entity inputs to the action
++type Entities struct {
++	AccountsService accountsservice.Interface
++}
++
++// Params is input required to make calls to accounts-service::FindAll
++type Params struct {
++	Entities    Entities
++	Assertions  struct {
++		Response []ResponseAssertion
++	}
++}
++
++// New triggers an action to call accounts-service::FindAll
++func New(p *Params) *ctf.Action {
++	return ctf.NewActionV2(actionName,
++		func(t *ctf.T) {
++			request := &empty.Empty{}
++
++			res, err := p.Entities.AccountsService.FindAll(t.Context(), request)
++			
++			for _, assertion := range p.Assertions.Response {
++				assertion(t, p.Entities, res, err)
++			}
++		},
++	)
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findall/assertion.go b/customer-service-grpc/src/main/actions/accountsservice/findall/assertion.go
+new file mode 100644
+index 0000000..4d03619
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findall/assertion.go
+@@ -0,0 +1,36 @@
++package findall
++
++import (
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	"github.com/uber/ctf"
++)
++
++// AssertSuccessfulResponse asserts the response is not nil and no error occurred
++func AssertSuccessfulResponse() ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		require.NoError(t, err, "there should be no error while finding all accounts")
++		require.NotNil(t, response, "response should not be nil while finding all accounts")
++	}
++}
++
++// AssertAccountsCount asserts the number of accounts in the response
++func AssertAccountsCount(expected int) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		require.Len(t, response.Account, expected, "number of accounts should match expected count")
++	}
++}
++
++// AssertAccountByNumber asserts an account with the given number exists
++func AssertAccountByNumber(number string) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		found := false
++		for _, account := range response.Account {
++			if account.Number == number {
++				found = true
++				break
++			}
++		}
++		require.True(t, found, "account with number %s should exist", number)
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/action.go b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/action.go
+new file mode 100644
+index 0000000..f744864
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/action.go
+@@ -0,0 +1,56 @@
++package findbycustomer
++
++import (
++	"github.com/golang/protobuf/ptypes/wrappers"
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	accountsservice "../"
++	"github.com/uber/ctf"
++)
++
++// actionName for this action
++const (
++	actionName = "test://accountsservice/actions/findbycustomer"
++)
++
++// RequestModifier is a modifier function which adds to the request before calling the action
++type RequestModifier func(*ctf.T, Entities, *wrappers.Int32Value)
++
++// ResponseAssertion is an assertion function to assert response
++type ResponseAssertion func(*ctf.T, Entities, *model.Accounts, error)
++
++// Entities are the entity inputs to the action
++type Entities struct {
++	AccountsService accountsservice.Interface
++	Customer       interface {
++		ID() int32
++	}
++}
++
++// Params is input required to make calls to accounts-service::FindByCustomer
++type Params struct {
++	Entities         Entities
++	RequestModifiers []RequestModifier
++	Assertions      struct {
++		Response []ResponseAssertion
++	}
++}
++
++// New triggers an action to call accounts-service::FindByCustomer
++func New(p *Params) *ctf.Action {
++	return ctf.NewActionV2(actionName,
++		func(t *ctf.T) {
++			request := &wrappers.Int32Value{}
++
++			for _, modifier := range p.RequestModifiers {
++				modifier(t, p.Entities, request)
++			}
++
++			res, err := p.Entities.AccountsService.FindByCustomer(t.Context(), request)
++			
++			for _, assertion := range p.Assertions.Response {
++				assertion(t, p.Entities, res, err)
++			}
++		},
++	)
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/assertion.go b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/assertion.go
+new file mode 100644
+index 0000000..237c190
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/assertion.go
+@@ -0,0 +1,36 @@
++package findbycustomer
++
++import (
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	"github.com/uber/ctf"
++)
++
++// AssertSuccessfulResponse asserts the response is not nil and no error occurred
++func AssertSuccessfulResponse() ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		require.NoError(t, err, "there should be no error while finding accounts by customer")
++		require.NotNil(t, response, "response should not be nil while finding accounts by customer")
++	}
++}
++
++// AssertAccountsCount asserts the number of accounts in the response
++func AssertAccountsCount(expected int) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		require.Len(t, response.Account, expected, "number of accounts should match expected count")
++	}
++}
++
++// AssertAccountByNumber asserts an account with the given number exists
++func AssertAccountByNumber(number string) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Accounts, err error) {
++		found := false
++		for _, account := range response.Account {
++			if account.Number == number {
++				found = true
++				break
++			}
++		}
++		require.True(t, found, "account with number %s should exist", number)
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/modifier.go b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/modifier.go
+new file mode 100644
+index 0000000..41d01e3
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbycustomer/modifier.go
+@@ -0,0 +1,13 @@
++package findbycustomer
++
++import (
++	"github.com/golang/protobuf/ptypes/wrappers"
++	"github.com/uber/ctf"
++)
++
++// CustomerIDRequestModifier sets the customer ID from entities in the request
++func CustomerIDRequestModifier() RequestModifier {
++	return func(t *ctf.T, entities Entities, request *wrappers.Int32Value) {
++		request.Value = entities.Customer.ID()
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbynumber/action.go b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/action.go
+new file mode 100644
+index 0000000..7fc97ba
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/action.go
+@@ -0,0 +1,53 @@
++package findbynumber
++
++import (
++	"github.com/golang/protobuf/ptypes/wrappers"
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	accountsservice "../"
++	"github.com/uber/ctf"
++)
++
++// actionName for this action
++const (
++	actionName = "test://accountsservice/actions/findbynumber"
++)
++
++// RequestModifier is a modifier function which adds to the request before calling the action
++type RequestModifier func(*ctf.T, Entities, *wrappers.StringValue)
++
++// ResponseAssertion is an assertion function to assert response
++type ResponseAssertion func(*ctf.T, Entities, *model.Account, error)
++
++// Entities are the entity inputs to the action
++type Entities struct {
++	AccountsService accountsservice.Interface
++}
++
++// Params is input required to make calls to accounts-service::FindByNumber
++type Params struct {
++	Entities         Entities
++	RequestModifiers []RequestModifier
++	Assertions      struct {
++		Response []ResponseAssertion
++	}
++}
++
++// New triggers an action to call accounts-service::FindByNumber
++func New(p *Params) *ctf.Action {
++	return ctf.NewActionV2(actionName,
++		func(t *ctf.T) {
++			request := &wrappers.StringValue{}
++
++			for _, modifier := range p.RequestModifiers {
++				modifier(t, p.Entities, request)
++			}
++
++			res, err := p.Entities.AccountsService.FindByNumber(t.Context(), request)
++			
++			for _, assertion := range p.Assertions.Response {
++				assertion(t, p.Entities, res, err)
++			}
++		},
++	)
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbynumber/assertion.go b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/assertion.go
+new file mode 100644
+index 0000000..2b4a04f
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/assertion.go
+@@ -0,0 +1,36 @@
++package findbynumber
++
++import (
++	"github.com/stretchr/testify/require"
++	"pl.piomin.services.grpc.customer.model"
++	"github.com/uber/ctf"
++)
++
++// AssertSuccessfulResponse asserts the response is not nil and no error occurred
++func AssertSuccessfulResponse() ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.NoError(t, err, "there should be no error while finding account by number")
++		require.NotNil(t, response, "response should not be nil while finding account by number")
++	}
++}
++
++// AssertAccountNumber asserts the account number matches expected value
++func AssertAccountNumber(expected string) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.Number, "account number should match expected value")
++	}
++}
++
++// AssertCustomerID asserts the customer ID matches expected value
++func AssertCustomerID(expected int32) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.CustomerId, "customer ID should match expected value")
++	}
++}
++
++// AssertAccountID asserts the account ID matches expected value
++func AssertAccountID(expected int32) ResponseAssertion {
++	return func(t *ctf.T, entities Entities, response *model.Account, err error) {
++		require.Equal(t, expected, response.Id, "account ID should match expected value")
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/findbynumber/modifier.go b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/modifier.go
+new file mode 100644
+index 0000000..6e0510e
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/findbynumber/modifier.go
+@@ -0,0 +1,13 @@
++package findbynumber
++
++import (
++	"github.com/golang/protobuf/ptypes/wrappers"
++	"github.com/uber/ctf"
++)
++
++// WithAccountNumber sets the account number in the request
++func WithAccountNumber(number string) RequestModifier {
++	return func(t *ctf.T, entities Entities, request *wrappers.StringValue) {
++		request.Value = number
++	}
++}
+diff --git a/customer-service-grpc/src/main/actions/accountsservice/gateway.go b/customer-service-grpc/src/main/actions/accountsservice/gateway.go
+new file mode 100644
+index 0000000..6e1a9be
+--- /dev/null
++++ b/customer-service-grpc/src/main/actions/accountsservice/gateway.go
+@@ -0,0 +1,49 @@
++package accountsservice
++
++import (
++	"context"
++	"github.com/golang/protobuf/ptypes/empty"
++	"github.com/golang/protobuf/ptypes/wrappers"
++	pb "pl.piomin.services.grpc.customer.model"
++)
++
++type gateway struct {
++	accountsServiceClient pb.AccountsServiceClient
++	tenancy              string
++}
++
++// Interface for talking to AccountsService endpoints
++type Interface interface {
++	FindByNumber(context.Context, *wrappers.StringValue) (*pb.Account, error)
++	FindByCustomer(context.Context, *wrappers.Int32Value) (*pb.Accounts, error)
++	FindAll(context.Context, *empty.Empty) (*pb.Accounts, error)
++	AddAccount(context.Context, *pb.Account) (*pb.Account, error)
++}
++
++// FindByNumber is RPC call to find account by number
++func (g *gateway) FindByNumber(ctx context.Context, request *wrappers.StringValue) (*pb.Account, error) {
++	return g.accountsServiceClient.FindByNumber(ctx, request)
++}
++
++// FindByCustomer is RPC call to find accounts by customer ID
++func (g *gateway) FindByCustomer(ctx context.Context, request *wrappers.Int32Value) (*pb.Accounts, error) {
++	return g.accountsServiceClient.FindByCustomer(ctx, request)
++}
++
++// FindAll is RPC call to find all accounts
++func (g *gateway) FindAll(ctx context.Context, request *empty.Empty) (*pb.Accounts, error) {
++	return g.accountsServiceClient.FindAll(ctx, request)
++}
++
++// AddAccount is RPC call to add a new account
++func (g *gateway) AddAccount(ctx context.Context, request *pb.Account) (*pb.Account, error) {
++	return g.accountsServiceClient.AddAccount(ctx, request)
++}
++
++// New creates a new gateway instance
++func New(client pb.AccountsServiceClient, tenancy string) Interface {
++	return &gateway{
++		accountsServiceClient: client,
++		tenancy:              tenancy,
++	}
++}
+-- 
+2.34.1
+
