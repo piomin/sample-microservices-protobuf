@@ -5,22 +5,6 @@ management.endpoints.web.exposure.include: metrics
 management.endpoint.metrics.enabled: true
 
 server.port: 8081
-grpc.server.port: 9091
+spring.grpc.server.port: 9091
 
-eureka:
-  instance:
-    status-page-url-path: /actuator/info
-    health-check-url-path: /actuator/health
-  client:
-    registerWithEureka: false
-    fetchRegistry: true
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
-grpc:
-  client:
-    account-service-grpc:
-      address: 'discovery:///account-service-grpc'
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: plaintext
+spring.grpc.client.channels.local.address: localhost:9090

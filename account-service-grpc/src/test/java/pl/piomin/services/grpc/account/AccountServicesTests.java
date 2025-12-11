@@ -3,24 +3,25 @@ package pl.piomin.services.grpc.account;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureInProcessTransport;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import pl.piomin.services.grpc.account.model.AccountProto;
 import pl.piomin.services.grpc.account.model.AccountsServiceGrpc;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(properties = {
-        "grpc.server.inProcessName=test",
-        "grpc.server.port=-1",
-        "grpc.client.inProcess.address=in-process:test"
-})
+@SpringBootTest
+@AutoConfigureInProcessTransport
 @DirtiesContext
 public class AccountServicesTests {
 
-    @GrpcClient("inProcess")
+    @Autowired
     AccountsServiceGrpc.AccountsServiceBlockingStub service;
 
     @Test
@@ -54,6 +55,16 @@ public class AccountServicesTests {
         a = service.addAccount(a);
         assertNotNull(a);
         assertNotEquals(0, a.getId());
+    }
+
+    @TestConfiguration
+    static class Config {
+
+        @Bean
+        AccountsServiceGrpc.AccountsServiceBlockingStub stub(GrpcChannelFactory channels) {
+            return AccountsServiceGrpc.newBlockingStub(channels.createChannel("local"));
+        }
+
     }
 
 }
