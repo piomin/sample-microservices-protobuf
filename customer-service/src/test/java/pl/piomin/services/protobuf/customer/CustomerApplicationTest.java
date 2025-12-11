@@ -46,15 +46,4 @@ public class CustomerApplicationTest {
                 .expectBody(Customers.class);
     }
 
-
-//    @TestConfiguration
-//    static class Config {
-//
-//        @Bean
-//        public RestTemplateBuilder restTemplateBuilder() {
-//            return new RestTemplateBuilder().additionalMessageConverters(new ProtobufHttpMessageConverter());
-//        }
-//
-//    }
-
 }
