@@ -3,7 +3,6 @@ package pl.piomin.services.grpc.customer.client;
 import com.google.protobuf.Int32Value;
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import net.devh.boot.grpc.client.inject.GrpcClientBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

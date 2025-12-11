@@ -19,10 +19,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.devh</groupId>
-            <artifactId>grpc-server-spring-boot-starter</artifactId>
-            <version>${grpc-springboot.version}</version>
+            <groupId>org.springframework.grpc</groupId>
+            <artifactId>spring-grpc-spring-boot-starter</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.devh</groupId>-->
+<!--            <artifactId>grpc-server-spring-boot-starter</artifactId>-->
+<!--            <version>${grpc-springboot.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -52,6 +56,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.grpc</groupId>
+            <artifactId>spring-grpc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-client-spring-boot-starter</artifactId>
             <version>${grpc-springboot.version}</version>
@@ -62,39 +71,64 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.github.os72</groupId>
-                <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>3.11.4</version>
+                <groupId>io.github.ascopes</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>4.1.1</version>
+                <configuration>
+                    <protoc>4.33.1</protoc>
+                    <binaryMavenPlugins>
+                        <binaryMavenPlugin>
+                            <groupId>io.grpc</groupId>
+                            <artifactId>protoc-gen-grpc-java</artifactId>
+                            <version>1.77.0</version>
+                            <options>@generated=omit</options>
+                        </binaryMavenPlugin>
+                    </binaryMavenPlugins>
+                </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>generate</goal>
                         </goals>
-                        <configuration>
-                            <addProtoSources>all</addProtoSources>
-                            <includeMavenTypes>direct</includeMavenTypes>
-                            <includeStdTypes>true</includeStdTypes>
-                            <outputDirectory>src/main/generated</outputDirectory>
-                            <inputDirectories>
-                                <include>src/main/proto</include>
-                            </inputDirectories>
-                            <includeImports>true</includeImports>
-                            <outputTargets>
-                                <outputTarget>
-                                    <type>java</type>
-                                    <outputDirectory>src/main/generated</outputDirectory>
-                                </outputTarget>
-                                <outputTarget>
-                                    <type>grpc-java</type>
-                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.61.1</pluginArtifact>
-                                    <outputDirectory>src/main/generated</outputDirectory>
-                                </outputTarget>
-                            </outputTargets>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.github.os72</groupId>-->
+<!--                <artifactId>protoc-jar-maven-plugin</artifactId>-->
+<!--                <version>3.11.4</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <addProtoSources>all</addProtoSources>-->
+<!--                            <includeMavenTypes>direct</includeMavenTypes>-->
+<!--                            <includeStdTypes>true</includeStdTypes>-->
+<!--                            <outputDirectory>src/main/generated</outputDirectory>-->
+<!--                            <optimizeCodegen>true</optimizeCodegen>-->
+<!--                            <protocVersion>4.33.1</protocVersion>-->
+<!--                            <inputDirectories>-->
+<!--                                <include>src/main/proto</include>-->
+<!--                            </inputDirectories>-->
+<!--                            <includeImports>true</includeImports>-->
+<!--                            <outputTargets>-->
+<!--                                <outputTarget>-->
+<!--                                    <type>java</type>-->
+<!--                                    <outputDirectory>src/main/generated</outputDirectory>-->
+<!--                                </outputTarget>-->
+<!--                                <outputTarget>-->
+<!--                                    <type>grpc-java</type>-->
+<!--                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.63.0</pluginArtifact>-->
+<!--                                    <outputDirectory>src/main/generated</outputDirectory>-->
+<!--                                </outputTarget>-->
+<!--                            </outputTargets>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -107,7 +141,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/main/generated</source>
+                                <source>target/generated-sources/protobuf</source>
                             </sources>
                         </configuration>
                     </execution>

@@ -1,55 +1,63 @@
 package pl.piomin.services.protobuf.account;
 
-import java.util.logging.Logger;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
-
+import org.springframework.test.web.servlet.client.RestTestClient;
+import org.springframework.web.context.WebApplicationContext;
 import pl.piomin.services.protobuf.account.model.AccountProto.Account;
 import pl.piomin.services.protobuf.account.model.AccountProto.Accounts;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AccountApplicationTest {
 
-    protected Logger logger = Logger.getLogger(AccountApplicationTest.class.getName());
+    protected Logger logger = LoggerFactory.getLogger(AccountApplicationTest.class);
+    RestTestClient template;
 
-    @Autowired
-    TestRestTemplate template;
+    @BeforeEach
+    void setUp(WebApplicationContext context) {
+        template = RestTestClient.bindToApplicationContext(context)
+                .baseUrl("/accounts")
+                .configureMessageConverters(clientBuilder -> clientBuilder.addCustomConverter(new ProtobufHttpMessageConverter()))
+                .build();
+    }
 
     @Test
     public void testFindByNumber() {
-        Account a = this.template.getForObject("/accounts/{id}", Account.class, "111111");
-        logger.info("Account[\n" + a + "]");
+        template.get().uri("/{id}", "111111")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Account.class);
     }
 
     @Test
     public void testFindByCustomer() {
-        Accounts a = this.template.getForObject("/accounts/customer/{customer}", Accounts.class, "2");
-        logger.info("Accounts[\n" + a + "]");
+        template.get().uri("/customer/{customer}", "111111")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Accounts.class);
     }
 
     @Test
     public void testFindAll() {
-        Accounts a = this.template.getForObject("/accounts", Accounts.class);
-        logger.info("Accounts[\n" + a + "]");
+        template.get().exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Accounts.class);
     }
 
 
-    @TestConfiguration
-    static class Config {
-
-        @Bean
-        public RestTemplateBuilder restTemplateBuilder() {
-            return new RestTemplateBuilder().additionalMessageConverters(new ProtobufHttpMessageConverter());
-        }
-
-    }
+//    @TestConfiguration
+//    static class Config {
+//
+//        @Bean
+//        public RestTemplateBuilder restTemplateBuilder() {
+//            return new RestTemplateBuilder().additionalMessageConverters(new ProtobufHttpMessageConverter());
+//        }
+//
+//    }
 
 }

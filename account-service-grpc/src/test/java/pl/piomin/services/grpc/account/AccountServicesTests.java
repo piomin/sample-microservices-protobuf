@@ -13,7 +13,7 @@ import pl.piomin.services.grpc.account.model.AccountsServiceGrpc;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = {
-        "grpc.server.inProcessName=test",
+        "spring.grpc.server.inprocess.name=test",
         "grpc.server.port=-1",
         "grpc.client.inProcess.address=in-process:test"
 })
