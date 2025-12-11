@@ -11,7 +11,7 @@
         <sonar.projectKey>piomin_sample-microservices-protobuf</sonar.projectKey>
         <sonar.organization>piomin</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <grpc.version>1.63.0</grpc.version>
+        <grpc.version>1.77.0</grpc.version>
         <grpc-springboot.version>3.1.0.RELEASE</grpc-springboot.version>
     </properties>
 
