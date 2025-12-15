@@ -10,6 +10,7 @@
 There are two articles related to that repo:
 1. How to expose Protocol Buffers over REST. Detailed description can be found here: [Exposing Microservices over REST Protocol Buffers](https://piotrminkowski.com/2017/06/05/exposing-microservices-over-rest-protocol-buffers/)
 2. How to create gRPC service with Spring Boot and integrate gRPC client with Spring Cloud discovery. Detailed description can be found here: [Introduction to gRPC with Spring Boot](https://piotrminkowski.com/2023/08/29/introduction-to-grpc-with-spring-boot/). This version has been replaced in repository with a new Spring Boot GRPC starter provided by Spring team. To check it visit https://github.com/piomin/sample-microservices-protobuf/releases/tag/v1.1.
+3. Spring gRPC with Spring Boot. Detailed description can be found here: [Spring gRPC in Spring Boot](https://piotrminkowski.com/2025/12/15/grpc-spring).
 
 ## Application Architecture
 

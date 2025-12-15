@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.grpc.client.GrpcChannelFactory;
-import org.springframework.test.annotation.DirtiesContext;
 import pl.piomin.services.grpc.customer.model.CustomerProto;
 import pl.piomin.services.grpc.customer.model.CustomersServiceGrpc;
 
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureInProcessTransport
-@DirtiesContext
 public class CustomerServicesTests {
 
     @Autowired

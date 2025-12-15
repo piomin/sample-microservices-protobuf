@@ -22,7 +22,8 @@ public class AccountRepository {
     }
 
     public List<AccountProto.Account> findByCustomer(int customerId) {
-        return accounts.stream().filter(it -> it.getCustomerId() == customerId).toList();
+        return accounts.stream().filter(it -> it.getCustomerId() == customerId)
+                .toList();
     }
 
     public AccountProto.Account findByNumber(String number) {
@@ -33,12 +34,11 @@ public class AccountRepository {
     }
 
     public AccountProto.Account add(int customerId, String number) {
-        AccountProto.Account a = AccountProto.Account.newBuilder()
+        return AccountProto.Account.newBuilder()
                 .setId(id.incrementAndGet())
                 .setCustomerId(customerId)
                 .setNumber(number)
                 .build();
-        return a;
     }
 
 }

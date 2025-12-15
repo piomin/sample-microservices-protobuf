@@ -4,7 +4,6 @@ import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.grpc.server.service.GrpcService;
 import pl.piomin.services.grpc.account.model.AccountProto;
 import pl.piomin.services.grpc.account.model.AccountsServiceGrpc;
@@ -15,8 +14,11 @@ import java.util.List;
 @GrpcService
 public class AccountsService extends AccountsServiceGrpc.AccountsServiceImplBase {
 
-    @Autowired
     AccountRepository repository;
+
+    public AccountsService(AccountRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public void findByNumber(StringValue request, StreamObserver<AccountProto.Account> responseObserver) {

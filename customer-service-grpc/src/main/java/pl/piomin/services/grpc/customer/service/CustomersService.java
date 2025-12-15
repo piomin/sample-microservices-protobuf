@@ -4,7 +4,6 @@ import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.grpc.server.service.GrpcService;
 import pl.piomin.services.grpc.customer.client.AccountClient;
 import pl.piomin.services.grpc.customer.model.CustomerProto;
@@ -16,10 +15,13 @@ import java.util.List;
 @GrpcService
 public class CustomersService extends CustomersServiceGrpc.CustomersServiceImplBase {
 
-    @Autowired
     CustomerRepository repository;
-    @Autowired
     AccountClient accountClient;
+
+    public CustomersService(CustomerRepository repository, AccountClient accountClient) {
+        this.repository = repository;
+        this.accountClient = accountClient;
+    }
 
     @Override
     public void findById(Int32Value request, StreamObserver<CustomerProto.Customer> responseObserver) {

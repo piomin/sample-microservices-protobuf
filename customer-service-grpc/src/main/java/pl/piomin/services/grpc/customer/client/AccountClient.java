@@ -20,7 +20,9 @@ public class AccountClient {
 
     public CustomerProto.Accounts getAccountsByCustomerId(int customerId) {
         try {
-            return accountsClient.findByCustomer(Int32Value.newBuilder().setValue(customerId).build());
+            return accountsClient.findByCustomer(Int32Value.newBuilder()
+                    .setValue(customerId)
+                    .build());
         } catch (final StatusRuntimeException e) {
             LOG.error("Error in communication", e);
             return null;
