@@ -59,7 +59,7 @@
                         <binaryMavenPlugin>
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
-                            <version>1.77.0</version>
+                            <version>1.78.0</version>
                             <options>@generated=omit</options>
                         </binaryMavenPlugin>
                     </binaryMavenPlugins>
