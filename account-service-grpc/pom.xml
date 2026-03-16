@@ -55,14 +55,14 @@
                 <version>5.0.2</version>
                 <configuration>
                     <protoc>4.33.1</protoc>
-                    <binaryMavenPlugins>
-                        <binaryMavenPlugin>
+                    <plugins>
+                        <plugin kind="binary-maven">
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
                             <version>1.79.0</version>
                             <options>@generated=omit</options>
-                        </binaryMavenPlugin>
-                    </binaryMavenPlugins>
+                        </plugin>
+                    </plugins>
                 </configuration>
                 <executions>
                     <execution>
