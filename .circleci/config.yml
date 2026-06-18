@@ -1,14 +1,19 @@
 version: 2.1
 
 jobs:
-  build:
+  analyze:
     docker:
       - image: 'cimg/openjdk:25.0.3'
     steps:
       - checkout
+      - git-shallow-clone/checkout_advanced:
+          clone_options: '--filter=blob:none'
+      - run:
+          name: "Git fetch"
+          command: git fetch --no-filter --refetch
       - run:
           name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar
+          command: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
 executors:
   jdk:
@@ -17,11 +22,12 @@ executors:
 
 orbs:
   maven: circleci/maven@2.1.1
+  git-shallow-clone: guitarrapc/git-shallow-clone@2.8.0
 
 workflows:
   maven_test:
     jobs:
       - maven/test:
           executor: jdk
-      - build:
+      - analyze:
           context: SonarCloud
