@@ -54,7 +54,7 @@
                         <plugin kind="binary-maven">
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
-                            <version>1.84.3</version>
+                            <version>1.85.0</version>
                             <options>@generated=omit</options>
                         </plugin>
                     </plugins>
