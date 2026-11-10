@@ -3,6 +3,8 @@ package pl.piomin.services.grpc.account;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
@@ -53,6 +55,13 @@ public class AccountServicesTests {
         a = service.addAccount(a);
         assertNotNull(a);
         assertNotEquals(0, a.getId());
+    }
+
+    @Test
+    void shouldReturnNotFoundForUnknownNumber() {
+        StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
+                () -> service.findByNumber(StringValue.newBuilder().setValue("000000").build()));
+        assertEquals(Status.Code.NOT_FOUND, e.getStatus().getCode());
     }
 
     @TestConfiguration

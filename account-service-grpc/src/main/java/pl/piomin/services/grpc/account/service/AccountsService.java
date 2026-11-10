@@ -3,6 +3,7 @@ package pl.piomin.services.grpc.account.service;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 import pl.piomin.services.grpc.account.model.AccountProto;
@@ -10,6 +11,7 @@ import pl.piomin.services.grpc.account.model.AccountsServiceGrpc;
 import pl.piomin.services.grpc.account.repository.AccountRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @GrpcService
 public class AccountsService extends AccountsServiceGrpc.AccountsServiceImplBase {
@@ -22,9 +24,13 @@ public class AccountsService extends AccountsServiceGrpc.AccountsServiceImplBase
 
     @Override
     public void findByNumber(StringValue request, StreamObserver<AccountProto.Account> responseObserver) {
-        AccountProto.Account a = repository.findByNumber(request.getValue());
-        responseObserver.onNext(a);
-        responseObserver.onCompleted();
+        try {
+            AccountProto.Account a = repository.findByNumber(request.getValue());
+            responseObserver.onNext(a);
+            responseObserver.onCompleted();
+        } catch (NoSuchElementException e) {
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override

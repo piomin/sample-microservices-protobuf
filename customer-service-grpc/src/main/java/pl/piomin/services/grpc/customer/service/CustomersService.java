@@ -3,6 +3,7 @@ package pl.piomin.services.grpc.customer.service;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 import pl.piomin.services.grpc.customer.client.AccountClient;
@@ -11,6 +12,7 @@ import pl.piomin.services.grpc.customer.model.CustomersServiceGrpc;
 import pl.piomin.services.grpc.customer.repository.CustomerRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @GrpcService
 public class CustomersService extends CustomersServiceGrpc.CustomersServiceImplBase {
@@ -25,19 +27,27 @@ public class CustomersService extends CustomersServiceGrpc.CustomersServiceImplB
 
     @Override
     public void findById(Int32Value request, StreamObserver<CustomerProto.Customer> responseObserver) {
-        CustomerProto.Customer c = repository.findById(request.getValue());
-        CustomerProto.Accounts a = accountClient.getAccountsByCustomerId(c.getId());
-        List<CustomerProto.Account> l = a.getAccountList();
-        c = CustomerProto.Customer.newBuilder(c).addAllAccounts(l).build();
-        responseObserver.onNext(c);
-        responseObserver.onCompleted();
+        try {
+            CustomerProto.Customer c = repository.findById(request.getValue());
+            CustomerProto.Accounts a = accountClient.getAccountsByCustomerId(c.getId());
+            List<CustomerProto.Account> l = a.getAccountList();
+            c = CustomerProto.Customer.newBuilder(c).addAllAccounts(l).build();
+            responseObserver.onNext(c);
+            responseObserver.onCompleted();
+        } catch (NoSuchElementException e) {
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override
     public void findByPesel(StringValue request, StreamObserver<CustomerProto.Customer> responseObserver) {
-        CustomerProto.Customer c = repository.findByPesel(request.getValue());
-        responseObserver.onNext(c);
-        responseObserver.onCompleted();
+        try {
+            CustomerProto.Customer c = repository.findByPesel(request.getValue());
+            responseObserver.onNext(c);
+            responseObserver.onCompleted();
+        } catch (NoSuchElementException e) {
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override

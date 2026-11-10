@@ -1,7 +1,10 @@
 package pl.piomin.services.grpc.customer;
 
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
@@ -33,6 +36,13 @@ public class CustomerServicesTests {
         CustomerProto.Customer c = service.findByPesel(StringValue.newBuilder().setValue("12345").build());
         assertNotNull(c);
         assertNotEquals(0, c.getId());
+    }
+
+    @Test
+    void shouldReturnNotFoundForUnknownCustomer() {
+        StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
+                () -> service.findById(Int32Value.newBuilder().setValue(999).build()));
+        assertEquals(Status.Code.NOT_FOUND, e.getStatus().getCode());
     }
 
     @TestConfiguration

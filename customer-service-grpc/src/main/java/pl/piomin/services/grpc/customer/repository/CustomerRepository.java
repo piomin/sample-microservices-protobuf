@@ -4,6 +4,7 @@ package pl.piomin.services.grpc.customer.repository;
 import pl.piomin.services.grpc.customer.model.CustomerProto;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,11 +20,13 @@ public class CustomerRepository {
     }
 
     public CustomerProto.Customer findById(int id) {
-        return customers.stream().filter(it -> it.getId() == id).findFirst().orElseThrow();
+        return customers.stream().filter(it -> it.getId() == id).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Customer with id " + id + " not found"));
     }
 
     public CustomerProto.Customer findByPesel(String pesel) {
-        return customers.stream().filter(it -> it.getPesel().equals(pesel)).findFirst().orElseThrow();
+        return customers.stream().filter(it -> it.getPesel().equals(pesel)).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Customer with PESEL " + pesel + " not found"));
     }
 
     public List<CustomerProto.Customer> findAll() {
