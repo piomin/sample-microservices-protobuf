@@ -1,10 +1,13 @@
 package pl.piomin.services.grpc.customer;
 
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureInProcessTransport;
+import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +18,7 @@ import pl.piomin.services.grpc.customer.model.CustomersServiceGrpc;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureInProcessTransport
+@AutoConfigureTestGrpcTransport
 public class CustomerServicesTests {
 
     @Autowired
@@ -33,6 +36,21 @@ public class CustomerServicesTests {
         CustomerProto.Customer c = service.findByPesel(StringValue.newBuilder().setValue("12345").build());
         assertNotNull(c);
         assertNotEquals(0, c.getId());
+    }
+
+    @Test
+    void shouldFindCustomerWithoutAccountsWhenAccountServiceUnavailable() {
+        CustomerProto.Customer c = service.findById(Int32Value.newBuilder().setValue(1).build());
+        assertNotNull(c);
+        assertEquals(1, c.getId());
+        assertEquals(0, c.getAccountsCount());
+    }
+
+    @Test
+    void shouldReturnNotFoundForUnknownCustomer() {
+        StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
+                () -> service.findById(Int32Value.newBuilder().setValue(999).build()));
+        assertEquals(Status.Code.NOT_FOUND, e.getStatus().getCode());
     }
 
     @TestConfiguration

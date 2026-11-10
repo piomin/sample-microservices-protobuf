@@ -4,6 +4,8 @@ package pl.piomin.services.grpc.account.repository;
 import pl.piomin.services.grpc.account.model.AccountProto;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AccountRepository {
@@ -12,7 +14,7 @@ public class AccountRepository {
     AtomicInteger id;
 
     public AccountRepository(List<AccountProto.Account> accounts) {
-        this.accounts = accounts;
+        this.accounts = new CopyOnWriteArrayList<>(accounts);
         this.id = new AtomicInteger();
         this.id.set(accounts.size());
     }
@@ -30,15 +32,17 @@ public class AccountRepository {
         return accounts.stream()
                 .filter(it -> it.getNumber().equals(number))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("Account with number " + number + " not found"));
     }
 
     public AccountProto.Account add(int customerId, String number) {
-        return AccountProto.Account.newBuilder()
+        AccountProto.Account a = AccountProto.Account.newBuilder()
                 .setId(id.incrementAndGet())
                 .setCustomerId(customerId)
                 .setNumber(number)
                 .build();
+        accounts.add(a);
+        return a;
     }
 
 }
