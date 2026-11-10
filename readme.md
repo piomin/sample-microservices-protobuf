@@ -41,7 +41,7 @@ The repository contains **5 Spring Boot applications** and one service discovery
 - **account-service-grpc**  
   - **HTTP Port:** 8081  
   - **gRPC Port:** 9091  
-  - **Library:** `grpc-server-spring-boot-starter`  
+  - **Library:** `spring-boot-starter-grpc-server` (Spring Boot 4.1 native gRPC support)  
   - **Services:** `FindByNumber`, `FindByCustomer`, `FindAll`, `AddAccount`
 
 - **customer-service-grpc**  
@@ -52,13 +52,21 @@ The repository contains **5 Spring Boot applications** and one service discovery
 
 ### Technology Stack
 
-- **Java 21**  
-- **Spring Boot 3.4.5**  
-- **Spring Cloud 2024.0.1** (Eureka, LoadBalancer, OpenFeign)  
-- **Protocol Buffers 4.31.1**  
-- **gRPC 1.63.0**  
-- **Maven 3.8+**  
-- **Docker & Docker Compose** (optional)
+| Component | Version | Used in |
+|-----------|---------|---------|
+| Java | 21 | all modules |
+| Spring Boot | 4.1.2 | all modules |
+| Spring Cloud | 2025.1.4 (Eureka, LoadBalancer, OpenFeign) | all modules |
+| Spring gRPC | 1.1.2 (`spring-boot-starter-grpc-server` / `-client`, native in Spring Boot 4.1) | `*-grpc` modules |
+| gRPC Java | 1.84.1 (runtime, managed by Spring Boot); `protoc-gen-grpc-java` 1.85.1 | `*-grpc` modules |
+| Protocol Buffers (`protobuf-java`) | 4.36.2 | all modules |
+| `protoc` | 4.33.1 (`*-grpc` modules), 4.26.1 (REST modules) | code generation |
+| `protobuf-maven-plugin` (io.github.ascopes) | 5.1.12 | `*-grpc` modules |
+| `protoc-jar-maven-plugin` | 3.11.4 | REST modules |
+| `protobuf-java-format` | 1.4 | REST modules |
+| JaCoCo | 0.8.16 | code coverage |
+| Maven | 3.8+ | build |
+| Docker & Docker Compose | optional | - |
 
 ### Communication Patterns
 

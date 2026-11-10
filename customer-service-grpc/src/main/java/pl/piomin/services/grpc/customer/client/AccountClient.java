@@ -24,8 +24,8 @@ public class AccountClient {
                     .setValue(customerId)
                     .build());
         } catch (final StatusRuntimeException e) {
-            LOG.error("Error in communication", e);
-            return null;
+            LOG.error("Error in communication with account-service", e);
+            return CustomerProto.Accounts.getDefaultInstance();
         }
     }
 }

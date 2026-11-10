@@ -39,6 +39,14 @@ public class CustomerServicesTests {
     }
 
     @Test
+    void shouldFindCustomerWithoutAccountsWhenAccountServiceUnavailable() {
+        CustomerProto.Customer c = service.findById(Int32Value.newBuilder().setValue(1).build());
+        assertNotNull(c);
+        assertEquals(1, c.getId());
+        assertEquals(0, c.getAccountsCount());
+    }
+
+    @Test
     void shouldReturnNotFoundForUnknownCustomer() {
         StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
                 () -> service.findById(Int32Value.newBuilder().setValue(999).build()));
