@@ -4,6 +4,7 @@ package pl.piomin.services.grpc.customer.repository;
 import pl.piomin.services.grpc.customer.model.CustomerProto;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomerRepository {
@@ -12,7 +13,7 @@ public class CustomerRepository {
     AtomicInteger id;
 
     public CustomerRepository(List<CustomerProto.Customer> customers) {
-        this.customers = customers;
+        this.customers = new CopyOnWriteArrayList<>(customers);
         this.id = new AtomicInteger();
         this.id.set(customers.size());
     }
@@ -36,6 +37,7 @@ public class CustomerRepository {
                 .setName(name)
                 .setPesel(pesel)
                 .build();
+        customers.add(c);
         return c;
     }
 }
