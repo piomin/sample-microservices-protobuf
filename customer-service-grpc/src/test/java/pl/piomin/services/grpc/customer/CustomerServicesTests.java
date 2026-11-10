@@ -4,7 +4,7 @@ import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureInProcessTransport;
+import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ import pl.piomin.services.grpc.customer.model.CustomersServiceGrpc;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureInProcessTransport
+@AutoConfigureTestGrpcTransport
 public class CustomerServicesTests {
 
     @Autowired
